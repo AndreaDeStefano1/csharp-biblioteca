@@ -1,4 +1,6 @@
-﻿Biblioteca B = new Biblioteca();
+﻿
+
+Biblioteca B = new Biblioteca();
 
 bool exit = false;
 B.SetUserList();
@@ -15,25 +17,76 @@ while (!exit)
     }
     else
     {
+        
+        Menu:
         Console.Clear();
-
         Console.WriteLine();
+        Console.WriteLine("Menu");
         Console.WriteLine("1 Cerca Libro per Nome");
+        Console.WriteLine("1 Cerca DVD per Nome");
         int userChoice = Convert.ToInt32(Console.ReadLine());   
         switch (userChoice)
         {
             case 1 :
 
-                Console.Clear();
-                B.SearchForName(List<Book> book);
+                Book foundBook = B.SearchForName(B.Books);
+                if (foundBook != null)
+                {
+                    B.Print(foundBook);
+                    Console.WriteLine("1.Torna");
+                    Console.WriteLine("2:Prestito");
+                    int input = Convert.ToInt32(Console.ReadLine());
+                    switch (input)
+                    {
+                        case 1:
+                            goto Menu;
+                            
+
+                        case 2 :
+                            Console.WriteLine("Integrare Prenotazione");
+                            break;
+                    }
+
+                }
                 break;
+
+            case 2 :
+
+                Dvd foundDvd = B.SearchForName(B.Dvds);
+                if (foundDvd != null)
+                {
+                    B.Print(foundDvd);
+                    Console.WriteLine("1.Torna");
+                    Console.WriteLine("2:Prestito");
+                    int input = Convert.ToInt32(Console.ReadLine());
+                    switch (input)
+                    {
+                        case 1:
+                            goto Menu;
+                            
+
+                        case 2 :
+                            Console.WriteLine("Integrare Prenotazione");
+                            break;
+                    }
+
+                }
+                break;
+
+                default :
+                    Console.WriteLine("Ciao!!");
+                    exit = true;
+
+
+                    break;
         }
     }
 }
 
 
-
-
+// dati di accesso
+// email: m@m.it
+//password: ...
 
 
 
@@ -58,14 +111,14 @@ while (!exit)
 class Biblioteca
 {
     public bool logged = false;
-    List<Book> Books = new List<Book>();  
-    List<Dvd> Dvds = new List<Dvd>();
+    public List<Book> Books = new List<Book>();
+    public List<Dvd> Dvds = new List<Dvd>();
     List<User> Users = new List<User>();
     
 
     public void SetUserList()
     {
-        User u = new User("Rossi", "Mario", "mario@rossi.it", "password", 3312323259);
+        User u = new User("Rossi", "Mario", "m@m.it", "password", 3312323259);
         Users.Add(u);   
     }
 
@@ -93,7 +146,7 @@ class Biblioteca
     public void Login()
     {
         User:
-        Console.Clear();
+        
         Console.WriteLine("Email:");
         foreach(User u in Users)
         {
@@ -142,7 +195,8 @@ class Biblioteca
     }
 
 
-    static Book SearchForName(List<Book> books)
+
+    public Book SearchForName(List<Book> books)
     {
     SearchForName:
         Console.WriteLine("Inserisci il nome del libro da ricercare");
@@ -151,14 +205,65 @@ class Biblioteca
         foreach (Book book in books)
         {
 
-            if (input.ToLower() == book.Title.ToLower())
+            if (book.Title.ToLower().Contains(input.ToLower()))
             {
                 Book b = book;
                 return b;
             }
-            Console.WriteLine("Nome non valido riprova");
+            else
+            {
+                Console.WriteLine("non torvato");
+            }
         }
         goto SearchForName;
+    }
+    public Dvd SearchForName(List<Dvd> dvds)
+    {
+    SearchForName:
+        Console.WriteLine("Inserisci il nome del libro da ricercare");
+        string input = Console.ReadLine();
+
+        foreach (Dvd dvd in dvds)
+        {
+
+            if (dvd.Title.ToLower().Contains(input.ToLower()))
+            {
+                Dvd b = dvd;
+                return b;
+            }
+            else
+            {
+                Console.WriteLine("non torvato");
+            }
+        }
+        goto SearchForName;
+    }
+
+    public void Print(Document d)
+    {
+        Console.WriteLine();
+        Console.WriteLine("Titolo: " + d.Title);
+        Console.WriteLine("Anno di pubblicazione: " + d.Year);
+        Console.WriteLine("Codice: " + d.Code);
+        Console.WriteLine("Genere: " + d.Sector);
+        Console.WriteLine("Disponibile: " + (d.Avaible ? "si" : "no"));
+        Console.WriteLine("Posizione: " + d.Position);
+        Console.WriteLine();
+        
+    }
+
+
+    public void Print(Book b)
+    {
+        Console.WriteLine();
+        Console.WriteLine("Titolo: " + b.Title);
+        Console.WriteLine("Anno di pubblicazione: " + b.Year);
+        Console.WriteLine("Codice: " + b.Code);
+        Console.WriteLine("Genere: " + b.Sector);
+        Console.WriteLine("Disponibile: " + (b.Avaible ? "si" : "no"));
+        Console.WriteLine("Posizione: " + b.Position);
+        Console.WriteLine();
+        
     }
 
 

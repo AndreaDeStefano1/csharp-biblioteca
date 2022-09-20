@@ -8,5 +8,23 @@ class Dvd : Document
         Time = time;
     }
 
+    public Dvd SearchForName(Dvd[] dvds)
+    {
+    SearchForName:
+        Console.WriteLine("Inserisci il nome del Dvd da ricercare");
+        string input = Console.ReadLine();
+
+        foreach (Dvd dvd in dvds)
+        {
+
+            if (input.ToLower() == dvd.Title.ToLower())
+            {
+                Dvd d = dvd;
+                return d;
+            }
+            Console.WriteLine("Nome non valido riprova");
+        }
+        goto SearchForName;
+    }
 
 }

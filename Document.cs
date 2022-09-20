@@ -19,4 +19,6 @@ class Document
         Position = position;
         Author = author;
     }
+
+    
 }

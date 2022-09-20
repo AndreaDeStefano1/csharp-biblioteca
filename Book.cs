@@ -7,4 +7,6 @@ class Book : Document
     {
         TotalPages = totalPages;
     }
+
+    
 }

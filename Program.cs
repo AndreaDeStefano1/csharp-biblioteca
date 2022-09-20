@@ -1,35 +1,41 @@
-﻿
-
-Biblioteca B = new Biblioteca();
+﻿Biblioteca B = new Biblioteca();
 
 bool exit = false;
 B.SetUserList();
 B.SetBookList();
 B.SetDvdList();
+User user = new User("XXX", "xxxx", "xxxx", "xxx", 3319262524);
+
+
 
 while (!exit)
 {
-    if(B.logged == false)
+    if (B.logged == false)
     {
         Console.WriteLine("Devi effettuare il Login");
-        B.Login();
-
+        
+        user = B.Login();
     }
     else
     {
         
-        Menu:
+        // dati di accesso
+        // email: m@m.it
+        // password: ...
+
+
+     Menu:
         Console.Clear();
         Console.WriteLine();
         Console.WriteLine("Menu");
-        Console.WriteLine("1 Cerca Libro per Nome");
-        Console.WriteLine("1 Cerca DVD per Nome");
+        Console.WriteLine("1 Cerca Libro");
+        Console.WriteLine("1 Cerca DVD");
         int userChoice = Convert.ToInt32(Console.ReadLine());   
         switch (userChoice)
         {
             case 1 :
 
-                Book foundBook = B.SearchForName(B.Books);
+                Book foundBook = B.Search(B.Books);
                 if (foundBook != null)
                 {
                     B.Print(foundBook);
@@ -39,11 +45,11 @@ while (!exit)
                     switch (input)
                     {
                         case 1:
+                            
                             goto Menu;
                             
-
                         case 2 :
-                            Console.WriteLine("Integrare Prenotazione");
+                            B.SetRent(foundBook, user);
                             break;
                     }
 
@@ -52,7 +58,7 @@ while (!exit)
 
             case 2 :
 
-                Dvd foundDvd = B.SearchForName(B.Dvds);
+                Dvd foundDvd = B.Search(B.Dvds);
                 if (foundDvd != null)
                 {
                     B.Print(foundDvd);
@@ -66,7 +72,7 @@ while (!exit)
                             
 
                         case 2 :
-                            Console.WriteLine("Integrare Prenotazione");
+                            B.SetRent(foundDvd, user);
                             break;
                     }
 
@@ -84,9 +90,6 @@ while (!exit)
 }
 
 
-// dati di accesso
-// email: m@m.it
-//password: ...
 
 
 
@@ -113,7 +116,8 @@ class Biblioteca
     public bool logged = false;
     public List<Book> Books = new List<Book>();
     public List<Dvd> Dvds = new List<Dvd>();
-    List<User> Users = new List<User>();
+    public List<User> Users = new List<User>();
+    List<Rent> Rents = new List<Rent>();
     
 
     public void SetUserList()
@@ -143,7 +147,7 @@ class Biblioteca
 
     }
 
-    public void Login()
+    public User Login()
     {
         User:
         
@@ -160,6 +164,7 @@ class Biblioteca
                 {
                     logged = true;
                     Console.WriteLine("Loggato");
+                    return u;
                 }
                 else
                 {
@@ -172,13 +177,14 @@ class Biblioteca
                 goto User;
             }
         }
+        goto User;
         
     }
 
-    public Document SearchForName(List<Document> documents)
+    public Document Search(List<Document> documents)
     {
-    SearchForName:
-        Console.WriteLine("inserisci il nome del libro da ricercare");
+    Search:
+        Console.WriteLine("Inserisci la ricerca");
         string input = Console.ReadLine();
 
         foreach (Document document in documents)
@@ -189,54 +195,50 @@ class Biblioteca
                 Document d = document;
                 return d;
             }
-            Console.WriteLine("Nome non valido riprova");
+            Console.WriteLine("Inserimento non valido");
         }
-        goto SearchForName;
+        goto Search;
     }
 
 
-
-    public Book SearchForName(List<Book> books)
+    public Book Search(List<Book> books)
     {
-    SearchForName:
-        Console.WriteLine("Inserisci il nome del libro da ricercare");
+    Search:
+        Console.WriteLine("Inserisci la ricerca");
         string input = Console.ReadLine();
 
         foreach (Book book in books)
         {
 
-            if (book.Title.ToLower().Contains(input.ToLower()))
+            if (book.Title.ToLower().Contains(input.ToLower()) || book.Code.ToLower().Contains(input.ToLower()))
             {
                 Book b = book;
                 return b;
             }
-            else
-            {
-                Console.WriteLine("non torvato");
-            }
+
         }
-        goto SearchForName;
+        Console.WriteLine("non torvato");
+        goto Search;
     }
-    public Dvd SearchForName(List<Dvd> dvds)
+
+    public Dvd Search(List<Dvd> dvds)
     {
-    SearchForName:
-        Console.WriteLine("Inserisci il nome del libro da ricercare");
+    Search:
+        Console.WriteLine("Inserisci la ricerca");
         string input = Console.ReadLine();
 
         foreach (Dvd dvd in dvds)
         {
 
-            if (dvd.Title.ToLower().Contains(input.ToLower()))
+            if (dvd.Title.ToLower().Contains(input.ToLower()) || dvd.Code.ToLower().Contains(input.ToLower()))
             {
                 Dvd b = dvd;
                 return b;
             }
-            else
-            {
-                Console.WriteLine("non torvato");
-            }
+ 
         }
-        goto SearchForName;
+        Console.WriteLine("non torvato");
+        goto Search;
     }
 
     public void Print(Document d)
@@ -248,8 +250,7 @@ class Biblioteca
         Console.WriteLine("Genere: " + d.Sector);
         Console.WriteLine("Disponibile: " + (d.Avaible ? "si" : "no"));
         Console.WriteLine("Posizione: " + d.Position);
-        Console.WriteLine();
-        
+        Console.WriteLine();        
     }
 
 
@@ -262,10 +263,27 @@ class Biblioteca
         Console.WriteLine("Genere: " + b.Sector);
         Console.WriteLine("Disponibile: " + (b.Avaible ? "si" : "no"));
         Console.WriteLine("Posizione: " + b.Position);
-        Console.WriteLine();
-        
+        Console.WriteLine();        
     }
 
-
+    public void SetRent(Book book , User user)
+    {
+        Console.WriteLine("Inserisci data di inizio prestito (DD/MM/YYYY)");
+        string startDate = Console.ReadLine();  
+        Console.WriteLine("Inserisci data di fine prestito (DD/MM/YYYY)");
+        string endDate = Console.ReadLine();
+        Rent r = new Rent(startDate, endDate, book.Title, user.GetFullName(user.Name, user.Surname));
+        Rents.Add(r);
+    }
+    
+    public void SetRent(Dvd book , User user)
+    {
+        Console.WriteLine("Inserisci data di inizio prestito (DD/MM/YYYY)");
+        string startDate = Console.ReadLine();  
+        Console.WriteLine("Inserisci data di fine prestito (DD/MM/YYYY)");
+        string endDate = Console.ReadLine();
+        Rent r = new Rent(startDate, endDate, book.Title, user.GetFullName(user.Name, user.Surname));
+        Rents.Add(r);
+    }
 
 }

@@ -7,6 +7,7 @@ class User
     public string Pasword { get; set; }
     public uint PhoneNumber { get; set; }
 
+
     public User(string surname, string name, string email, string pasword, uint phoneNumber)
     {
         Surname = surname;
@@ -14,5 +15,11 @@ class User
         Email = email;
         Pasword = pasword;
         PhoneNumber = phoneNumber;
+    }
+
+    public string GetFullName(string name, string surname)
+    {
+        return Name + " " + Surname;
+
     }
 }

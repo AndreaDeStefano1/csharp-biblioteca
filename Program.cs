@@ -29,7 +29,8 @@ while (!exit)
         Console.WriteLine();
         Console.WriteLine("Menu");
         Console.WriteLine("1 Cerca Libro");
-        Console.WriteLine("1 Cerca DVD");
+        Console.WriteLine("2 Cerca DVD");
+        Console.WriteLine("3 Cerca Prestito");
         int userChoice = Convert.ToInt32(Console.ReadLine());   
         switch (userChoice)
         {
@@ -45,12 +46,13 @@ while (!exit)
                     switch (input)
                     {
                         case 1:
-                            
                             goto Menu;
-                            
+
                         case 2 :
                             B.SetRent(foundBook, user);
-                            break;
+                            Console.WriteLine("Grazie!");
+                            goto Menu;
+
                     }
 
                 }
@@ -76,6 +78,22 @@ while (!exit)
                             break;
                     }
 
+                }
+                break;
+
+            case 3:
+                Console.WriteLine("Inserisci il nome completo dell utente");
+                string userName = Console.ReadLine();
+                B.PrintRent(B.SearchRent(userName));
+                Console.WriteLine();
+                Console.WriteLine("1. esci");
+                Console.WriteLine();
+                int userFlag = Convert.ToInt32(Console.ReadLine());
+                switch (userFlag)
+                {
+                    case 1:
+
+                        goto Menu;
                 }
                 break;
 
@@ -268,22 +286,71 @@ class Biblioteca
 
     public void SetRent(Book book , User user)
     {
+        if (book.Avaible)
+        {
+        book.Avaible = false;
         Console.WriteLine("Inserisci data di inizio prestito (DD/MM/YYYY)");
         string startDate = Console.ReadLine();  
         Console.WriteLine("Inserisci data di fine prestito (DD/MM/YYYY)");
         string endDate = Console.ReadLine();
         Rent r = new Rent(startDate, endDate, book.Title, user.GetFullName(user.Name, user.Surname));
         Rents.Add(r);
+        }
+        else
+        {
+            Console.WriteLine("Non è possibili effettuare il prestito un libro non disponibile");
+        }
     }
     
-    public void SetRent(Dvd book , User user)
+    public void SetRent(Dvd dvd , User user)
     {
-        Console.WriteLine("Inserisci data di inizio prestito (DD/MM/YYYY)");
-        string startDate = Console.ReadLine();  
-        Console.WriteLine("Inserisci data di fine prestito (DD/MM/YYYY)");
-        string endDate = Console.ReadLine();
-        Rent r = new Rent(startDate, endDate, book.Title, user.GetFullName(user.Name, user.Surname));
-        Rents.Add(r);
+        if (dvd.Avaible)
+        {
+            dvd.Avaible = false;
+            Console.WriteLine("Inserisci data di inizio prestito (DD/MM/YYYY)");
+            string startDate = Console.ReadLine();
+            Console.WriteLine("Inserisci data di fine prestito (DD/MM/YYYY)");
+            string endDate = Console.ReadLine();
+            Rent r = new Rent(startDate, endDate, dvd.Title, user.GetFullName(user.Name, user.Surname));
+            Rents.Add(r);
+        }
+        else
+        {
+            Console.WriteLine("Non è possibili effettuare il prestito un dvd non disponibile");
+
+        }
     }
 
+    public Rent SearchRent(string fullName)
+    {
+        if(Rents.Count > 0)
+        {
+            Ricerca:
+            foreach (Rent r in Rents)
+            {
+                if (r.UserFullName.ToLower().Contains(fullName.ToLower()))
+                {
+                    return r;
+                }
+            }
+            Console.WriteLine("La ricerca non ha restituito nessun risultato, riprova");
+            goto Ricerca;
+        }
+        Rent rent = new Rent("xxx", "xxx", "xxx", "xxx");
+        return rent;
+    }
+
+    public void PrintRent(Rent rent)
+    {
+        if(rent.Name != "xxx")
+        {
+            Console.WriteLine();
+            Console.WriteLine("Titolo prestato: " + rent.Name);
+            Console.WriteLine("Nome: " + rent.UserFullName);
+            Console.WriteLine("Inizio prestito: " + rent.StartDate);
+            Console.WriteLine("Fine prestito: " + rent.EndDate);
+            Console.WriteLine();
+        }
+
+    }
 }

@@ -1,7 +1,7 @@
 ﻿
-class Documento
+class Document
 {
-    public virtual string Code { get; set; }
+    public string Code { get; set; }
     public string Title { get; set; }
     public int Year { get; set; }
     public string Sector { get; set; }
@@ -9,7 +9,7 @@ class Documento
     public string Position { get; set; }
     public string Author { get; set; }
 
-    public Documento(string code, string title, int year, string sector, bool avaible, string position, string author)
+    public Document(string code, string title, int year, string sector, bool avaible, string position, string author)
     {
         Code = code;
         Title = title;
